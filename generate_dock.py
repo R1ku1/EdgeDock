@@ -179,7 +179,6 @@ def build_ini(games):
         gid = g["id"]
         reset_bangs.append(f'[!CommandMeasure Tween{gid} "Hide()"]')
         reset_bangs.append(f'[!SetOption {gid} "Greyscale" "1"]')
-    reset_bangs.append("[!HideMeterGroup Labels]")
 
     lines += [
         "[HoverZone]",
@@ -210,7 +209,6 @@ def build_ini(games):
         gid = g["id"]
         tween_id = f"Tween{gid}"
         y_base = rest_y(i)
-        label_y = y_base + (ICON_SIZE_HOVER // 2) - 6
 
         # Y is pushed down by the combined (fractional) growth of every
         # icon ABOVE this one - so partial/overlapping hovers blend
@@ -235,13 +233,10 @@ def build_ini(games):
             '[!CommandMeasure FadeScript "Show()"]'
             f'[!CommandMeasure {tween_id} "Show()"]'
             f'[!SetOption {gid} "Greyscale" "0"]'
-            '[!HideMeterGroup Labels]'
-            f'[!ShowMeter Label{gid}]'
         )
         mouse_leave = (
             f'[!CommandMeasure {tween_id} "Hide()"]'
             f'[!SetOption {gid} "Greyscale" "1"]'
-            f'[!HideMeter Label{gid}]'
         )
         # click-down: instant tactile dip, no delay - confirms the click
         # registered before anything even launches
@@ -267,18 +262,6 @@ def build_ini(games):
             f"MouseLeaveAction={mouse_leave}",
             f"LeftMouseDownAction={mouse_down}",
             f"LeftMouseUpAction={mouse_up}",
-            "",
-            f"[Label{gid}]",
-            "Meter=String",
-            "Group=Labels",
-            "Hidden=1",
-            "X=(#DockX# + #IconSizeHover# + #LabelGap#)",
-            f"Y={label_y}",
-            f"FontSize={FONT_SIZE}",
-            f"FontFace={FONT_FACE}",
-            "FontColor=#FontClr#",
-            "AntiAlias=1",
-            f"Text={g['name']}",
             "",
         ]
 
