@@ -57,9 +57,22 @@ def load_manifest():
     with open(MANIFEST_PATH, "r", encoding="utf-8") as f:
         games = json.load(f)
 
+    if not isinstance(games, list):
+        sys.exit(
+            "ERROR: games.json must be a [ ] list of entries at the top level, "
+            f"but found a {type(games).__name__} instead. Wrap your entries "
+            "in square brackets, e.g. [ {...}, {...} ]."
+        )
+
     required = {"id", "name", "image", "shortcut"}
     seen_ids = set()
-    for g in games:
+    for i, g in enumerate(games):
+        if not isinstance(g, dict):
+            sys.exit(
+                f"ERROR: entry #{i + 1} in games.json is not a {{...}} object "
+                f"(got: {g!r}). Check for a missing brace, bracket, or comma "
+                f"near that entry."
+            )
         missing = required - g.keys()
         if missing:
             sys.exit(f"ERROR: manifest entry {g} is missing fields: {missing}")
@@ -216,6 +229,7 @@ def build_ini(games):
             "(#IconSize# + ((#IconSizeHover# - #IconSize#) * "
             f"[{tween_id}] / 100))"
         )
+        x_formula = "(#DockX# - #SlideDistance# + (#SlideDistance# * [FadeScript] / 255))"
 
         mouse_over = (
             '[!CommandMeasure FadeScript "Show()"]'
@@ -229,6 +243,10 @@ def build_ini(games):
             f'[!SetOption {gid} "Greyscale" "1"]'
             f'[!HideMeter Label{gid}]'
         )
+        # click-down: instant tactile dip, no delay - confirms the click
+        # registered before anything even launches
+        mouse_down = f'[!CommandMeasure {tween_id} "Punch()"]'
+        mouse_up = f'["{g["shortcut"]}"]'
 
         lines += [
             f"; {'=' * 60}",
@@ -238,7 +256,7 @@ def build_ini(games):
             "Meter=Image",
             f"W={size_formula}",
             f"H={size_formula}",
-            "X=(#DockX# - #SlideDistance# + (#SlideDistance# * [FadeScript] / 255))",
+            f"X={x_formula}",
             f"Y={y_formula}",
             "SolidColor=0,0,0,1",
             f"ImageName=assets/{g['image']}",
@@ -247,7 +265,8 @@ def build_ini(games):
             "DynamicVariables=1",
             f"MouseOverAction={mouse_over}",
             f"MouseLeaveAction={mouse_leave}",
-            f'LeftMouseUpAction=["{g["shortcut"]}"]',
+            f"LeftMouseDownAction={mouse_down}",
+            f"LeftMouseUpAction={mouse_up}",
             "",
             f"[Label{gid}]",
             "Meter=String",

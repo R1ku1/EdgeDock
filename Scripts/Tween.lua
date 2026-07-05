@@ -21,3 +21,9 @@ end
 function Hide()
     target = 0
 end
+
+function Punch()
+    -- dip below target on click; the normal Update() easing
+    -- already running will spring it back up smoothly on its own
+    current = math.max(current - 90, 0)
+end
