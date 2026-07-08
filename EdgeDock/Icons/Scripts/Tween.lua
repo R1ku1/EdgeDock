@@ -25,5 +25,5 @@ end
 function Punch()
     -- dip below target on click; the normal Update() easing
     -- already running will spring it back up smoothly on its own
-    current = math.max(current - 90, 0)
+    current = math.max(current - 65, 0)
 end
