@@ -4,7 +4,6 @@ A personal collection of Rainmeter skins, including both custom creations and cu
 
 ## 📂 Skins
 
-- **MiniWeatherSimple** – Lightweight weather widget using Open‑Meteo + PowerShell. Auto‑geocoding, icon scale, monochrome toggle.
 - **Spectrum** – Visual audio spectrum analyzer.
 - **Mond** – Elegant clock and recycle bin (third‑party, included for convenience).
 - **lines** – System monitoring lines (CPU, RAM, HDD) – minimal design.
